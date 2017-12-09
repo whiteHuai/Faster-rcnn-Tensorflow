@@ -60,7 +60,11 @@ def parse_args():
                         nargs=argparse.REMAINDER)
     parser.add_argument('--restore', dest='restore',
                         help='restore or not',
-                        default=1, type=int)
+                        default=0, type=int)
+    parser.add_argument('--output_dir',dest='output_dir',
+                        help='dir to save checkpoint',
+                        default='/home/white/TF_Project/TFFRCNN/output/faster_rcnn_pano_vgg/change_anchor_size',
+                        type=str)
 
     if len(sys.argv) == 1:
         parser.print_help()
@@ -90,7 +94,8 @@ if __name__ == '__main__':
     print 'Loaded dataset `{:s}` for training'.format(imdb.name)
     roidb = get_training_roidb(imdb)
 
-    output_dir = get_output_dir(imdb, None)
+    # output_dir = get_output_dir(imdb, None)
+    output_dir =args.output_dir
     log_dir = get_log_dir(imdb)
     print 'Output will be saved to `{:s}`'.format(output_dir)
     print 'Logs will be saved to `{:s}`'.format(log_dir)
