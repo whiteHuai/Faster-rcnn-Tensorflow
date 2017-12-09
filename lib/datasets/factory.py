@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # --------------------------------------------------------
 # Fast R-CNN
 # Copyright (c) 2015 Microsoft
@@ -12,6 +13,7 @@ __sets = {}
 import numpy as np
 
 from .pascal_voc import pascal_voc
+from .panodb import panodb
 from .imagenet3d import imagenet3d
 from .kitti import kitti
 from .kitti_tracking import kitti_tracking
@@ -66,6 +68,14 @@ for split in ['71', '370']:
     print name
     __sets[name] = (lambda split=split: nthu(split))
 
+#设置自己的数据
+for mydbname in ['new_2017_pano']:
+    name='new_2017_pano'
+    __sets[name]=(lambda split=name,year='2017':panodb(split,year))
+
+for mydbname in ['new_2017_pano_test']:
+    name='new_2017_pano_test'
+    __sets[name]=(lambda split=name,year='test':panodb(split,year))
 
 def get_imdb(name):
     """Get an imdb (image database) by name."""

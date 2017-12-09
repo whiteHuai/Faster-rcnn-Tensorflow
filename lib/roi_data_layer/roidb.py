@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 # --------------------------------------------------------
 # Fast R-CNN
 # Copyright (c) 2015 Microsoft
@@ -28,6 +29,7 @@ def prepare_roidb(imdb):
     sizes = [PIL.Image.open(imdb.image_path_at(i)).size
              for i in xrange(imdb.num_images)]
     roidb = imdb.roidb
+    #roidb是一个list，里面的每个元素又是每张图片的dictionary，dictionary里含有每个boundingbox的信息
     for i in xrange(len(imdb.image_index)):
         roidb[i]['image'] = imdb.image_path_at(i)
         roidb[i]['width'] = sizes[i][0]
@@ -132,13 +134,16 @@ def _compute_targets(rois, overlaps, labels):
     ex_inds = np.where(overlaps >= cfg.TRAIN.BBOX_THRESH)[0]
 
     # Get IoU overlap between each ex ROI and gt ROI
+    #算出每个ex ROI和 gt ROI之间的IoU
     ex_gt_overlaps = bbox_overlaps(
         np.ascontiguousarray(rois[ex_inds, :], dtype=np.float),
         np.ascontiguousarray(rois[gt_inds, :], dtype=np.float))
 
     # Find which gt ROI each ex ROI has max overlap with:
     # this will be the ex ROI's gt target
+    #gt_assignment是每个ex_RoI对应的最大的IOU的那个gt_ROI的索引
     gt_assignment = ex_gt_overlaps.argmax(axis=1)
+    #gt_rois是每个ex_roi 对应的overlap最大的那个gt_roi
     gt_rois = rois[gt_inds[gt_assignment], :]
     ex_rois = rois[ex_inds, :]
 

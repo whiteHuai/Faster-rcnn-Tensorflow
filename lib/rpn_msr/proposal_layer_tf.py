@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 # --------------------------------------------------------
 # Faster R-CNN
 # Copyright (c) 2015 Microsoft
@@ -134,6 +135,7 @@ def proposal_layer(rpn_cls_prob_reshape, rpn_bbox_pred, im_info, cfg_key, _feat_
     proposals = bbox_transform_inv(anchors, bbox_deltas)
 
     # 2. clip predicted boxes to image
+    # 把超出边界的预测框剪切到边界
     proposals = clip_boxes(proposals, im_info[:2])
 
     # 3. remove predicted boxes with either height or width < threshold

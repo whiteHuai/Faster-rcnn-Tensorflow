@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 # --------------------------------------------------------
 # Faster R-CNN
 # Copyright (c) 2015 Microsoft
@@ -110,6 +111,7 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, gt_ishard, dontcare_areas, im_i
     all_anchors = all_anchors.reshape((K * A, 4))
     total_anchors = int(K * A)
 
+    ######################以上是产生anchors并且对应到图中的坐标##############################
     # only keep anchors inside the image
     inds_inside = np.where(
         (all_anchors[:, 0] >= -_allowed_border) &
@@ -137,8 +139,8 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, gt_ishard, dontcare_areas, im_i
     overlaps = bbox_overlaps(
         np.ascontiguousarray(anchors, dtype=np.float),
         np.ascontiguousarray(gt_boxes, dtype=np.float))
-    argmax_overlaps = overlaps.argmax(axis=1) # (A)
-    max_overlaps = overlaps[np.arange(len(inds_inside)), argmax_overlaps]
+    argmax_overlaps = overlaps.argmax(axis=1) # (A)  每一个anchor跟哪一个gt_box的overlap最大
+    max_overlaps = overlaps[np.arange(len(inds_inside)), argmax_overlaps]#跟最大overlap的gt_box的overlap值
     gt_argmax_overlaps = overlaps.argmax(axis=0) # G
     gt_max_overlaps = overlaps[gt_argmax_overlaps,
                                np.arange(overlaps.shape[1])]
@@ -189,7 +191,7 @@ def anchor_target_layer(rpn_cls_score, gt_boxes, gt_ishard, dontcare_areas, im_i
         disable_inds = npr.choice(
             fg_inds, size=(len(fg_inds) - num_fg), replace=False)
         labels[disable_inds] = -1
-
+    ##############训练的时候总共只取256个anchor出来训练，其中正负各占一半#######################
     # subsample negative labels if we have too many
     num_bg = cfg.TRAIN.RPN_BATCHSIZE - np.sum(labels == 1)
     bg_inds = np.where(labels == 0)[0]

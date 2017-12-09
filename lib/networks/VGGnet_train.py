@@ -1,3 +1,4 @@
+# -*- coding:utf-8 -*-
 import tensorflow as tf
 from network import Network
 from ..fast_rcnn.config import cfg
@@ -57,7 +58,10 @@ class VGGnet_train(Network):
         # output: rpn_labels(HxWxA, 2) rpn_bbox_targets(HxWxA, 4) rpn_bbox_inside_weights rpn_bbox_outside_weights
         (self.feed('rpn_cls_score', 'gt_boxes', 'gt_ishard', 'dontcare_areas', 'im_info')
              .anchor_target_layer(_feat_stride, anchor_scales, name = 'rpn-data' ))
-
+        ########anchor_target_layer用来产生anchor的label target和bbox target
+        ########这些target是用来训练RPN网络的，这里就选了256个anchor训练，其中128个label为1，
+        ######## 另外128个为0，其它为-1(don't care)
+        ########训练RPN阶段没有用到NMS
         # shape is (1, H, W, Ax2) -> (1, H, WxA, 2)
         (self.feed('rpn_cls_score')
              .spatial_reshape_layer(2, name = 'rpn_cls_score_reshape')
@@ -73,13 +77,19 @@ class VGGnet_train(Network):
         # rpn_rois <- (1 x H x W x A, 5) e.g. [0, x1, y1, x2, y2]
         (self.feed('rpn_cls_prob_reshape','rpn_bbox_pred','im_info')
              .proposal_layer(_feat_stride, anchor_scales, 'TRAIN', name = 'rpn_rois'))
+        #######proposal_layer对所有的anchors加上delta_box，再主要根据scores和nms
+        #######选出300个proposals（可设置）
+
 
         # matching boxes and groundtruth,
         # and randomly sample some rois and labels for RCNN
         (self.feed('rpn_rois','gt_boxes', 'gt_ishard', 'dontcare_areas')
              .proposal_target_layer(n_classes,name = 'roi-data'))
+        ##########用来产生roi的label target和bbox target,用来训练fast rcnn网络的，这些roi是上一层的
+        ##########proposal_layer层产生的,然后从这些roi和gt_roi选取BATCH_SIZE个proposal用来训练,
+        ##########这些BATCH_SIZE里有FG_FRACTION的部分是前景的各种类别
 
-        #========= RCNN ============        
+        #=========Fast RCNN ============
         (self.feed('conv5_3', 'rois')
              .roi_pool(7, 7, 1.0/16, name='pool_5')
              .fc(4096, name='fc6')

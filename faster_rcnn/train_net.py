@@ -1,4 +1,4 @@
-
+# -*- coding: utf-8 -*-
 # --------------------------------------------------------
 # Fast R-CNN
 # Copyright (c) 2015 Microsoft
@@ -42,19 +42,19 @@ def parse_args():
                         default=70000, type=int)
     parser.add_argument('--weights', dest='pretrained_model',
                         help='initialize with pretrained model weights',
-                        default=None, type=str)
+                        default='/home/white/TF_Project/TFFRCNN/data/pretrain_model/VGG_imagenet.npy', type=str)
     parser.add_argument('--cfg', dest='cfg_file',
-                        help='optional config file',
-                        default=None, type=str)
+                        help='./experiments/cfgs/faster_rcnn_end2end.yml',
+                        default='/home/white/TF_Project/TFFRCNN/experiments/cfgs/faster_rcnn_end2end_pano.yml', type=str)
     parser.add_argument('--imdb', dest='imdb_name',
                         help='dataset to train on',
-                        default='kitti_train', type=str)
+                        default='new_2017_pano', type=str)
     parser.add_argument('--rand', dest='randomize',
                         help='randomize (do not use a fixed seed)',
                         action='store_true')
     parser.add_argument('--network', dest='network_name',
-                        help='name of the network',
-                        default=None, type=str)
+                        help='VGGnet_train',
+                        default='VGGnet_train', type=str)
     parser.add_argument('--set', dest='set_cfgs',
                         help='set config keys', default=None,
                         nargs=argparse.REMAINDER)

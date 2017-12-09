@@ -33,24 +33,24 @@ def parse_args():
                         default=None, type=str)
     parser.add_argument('--weights', dest='model',
                         help='model to test',
-                        default=None, type=str)
+                        default='/home/white/TF_Project/TFFRCNN/output/faster_rcnn_pano_vgg/new_2017_pano/VGGnet_fast_rcnn_iter_70000.ckpt', type=str)
     parser.add_argument('--cfg', dest='cfg_file',
-                        help='optional config file', default=None, type=str)
+                        help='optional config file', default='/home/white/TF_Project/TFFRCNN/experiments/cfgs/faster_rcnn_end2end_pano.yml', type=str)
     parser.add_argument('--wait', dest='wait',
                         help='wait until net file exists',
                         default=True, type=bool)
     parser.add_argument('--imdb', dest='imdb_name',
                         help='dataset to test',
-                        default='voc_2007_test', type=str)
+                        default='new_2017_pano_test', type=str)
     parser.add_argument('--comp', dest='comp_mode', help='competition mode',
                         action='store_true')
     parser.add_argument('--network', dest='network_name',
                         help='name of the network',
-                        default=None, type=str)
+                        default='VGGnet_test', type=str)
 
-    if len(sys.argv) == 1:
-        parser.print_help()
-        sys.exit(1)
+    # if len(sys.argv) == 1:
+    #     parser.print_help()
+    #     sys.exit(1)
 
     args = parser.parse_args()
     return args
@@ -67,9 +67,9 @@ if __name__ == '__main__':
     print('Using config:')
     pprint.pprint(cfg)
 
-    while not os.path.exists(args.model) and args.wait:
-        print('Waiting for {} to exist...'.format(args.model))
-        time.sleep(1000)
+    # while not os.path.exists(args.model) and args.wait:
+    #     print('Waiting for {} to exist...'.format(args.model))
+    #     time.sleep(1000)
 
     weights_filename = os.path.splitext(os.path.basename(args.model))[0]
 
